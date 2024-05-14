@@ -1,0 +1,13 @@
+@startuml kubernetes_controllers
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml 
+!include <k8s/Common>
+title kubernetes_controllers
+Container_Boundary(controllers,"CONTROLLERS","THE KUBERNETES CONTROLLERS INSIDE THE CONTROL MANAGER"){
+    Container(nodeCtl,"NODE CONTROLLER","**DESCRIPTION**:")
+    Container(deploymentCtl,"DEPLOYMENT CONTROLLER","**DESCRIPTION**:Responsible for deployments")
+    Container(replicasetCtl,"REPLICASET CONTROLLER","**DESCRIPTION**:Responsible for creating pod based on replicaset")
+    Container(serviceCtl,"SERVICE CONTROLLER","**DESCRIPTION**:Responsible for configuring ClusterIP, NodePort and LoadBalancer configuration for services objects")
+    Container(satatefulsetCtl,"STATEFUL SET CONTROLLER","**DESCRIPTION**:Responsible for creating pods in a guaranteed order with a sticky identity")
+    Container(cronjobCtl,"CRONJOB CONTROLLER","**DESCRIPTION**: Responsible for creating Job objects based on the Cron schedule defined in CronJob objects")
+}
+@enduml

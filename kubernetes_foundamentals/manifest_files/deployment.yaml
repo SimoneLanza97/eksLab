@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-application
+  labels:
+    app: wordpress
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: wordpress
+  template:
+    metadata:
+      labels:
+        app: wordpress
+    spec:
+      containers:
+      - name: my-wordpress
+        image: wordpress:php8.3-fpm-alpine
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "506Mi"
+          limits:
+            cpu: "500m"
+            memory: "516Mi"
+        environment:
+          WORDPRESS_DB_HOST: mariadb01
+          WORDPRESS_DB_USER: wpadmindb
+          WORDPRESS_DB_PASSWORD: example
+          WORDPRESS_DB_NAME: app01db
+        volumeMounts:
+        - name: wordpress
+          mountPath: /var/www/html
+        volumes:
+        - name: wordpress
+          emptyDir: {}
+      strategy:
+        type: RollingUpdate
+        rollingUpdate:
+          maxUnavailable: 50%
+          maxSurge: 50%
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mariadb01_1
+spec:
+  selector:
+    matchLabels:
+      app: mariadb
+  template:
+    metadata:
+      labels:
+        app: mariadb
+    spec:
+      containers:
+      - name: mariadb01
+        image: mariadb:11.4.1-rc-jammy
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 3306
+        environment:
+          MARIADB_USER: wpadmindb
+          MARIADB_PASSWORD: example
+          MARIADB_DATABASE: app01db
+        volumeMounts:
+        - name: mariadbVol
+          mountPath: /var/lib/mysql
+        volumes:
+        - name: mariadbVol
+          emptyDir: {}

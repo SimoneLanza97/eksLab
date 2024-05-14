@@ -1,0 +1,33 @@
+@startuml kubernetes_architecture
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml 
+!include <k8s/Common>
+title kubernetes_architecture
+' left to right direction
+Person(user,"USER")
+Container_Boundary(workerNode,"WORKER NODE"){
+    Container(kubelet,"KUBELET","**DESCRIPTION**:Agent that runs on every node , reponsible for making container running inside pods on specific nodes")
+    Container(kubeProxy,"KUBE-PROXY","**DESCRIPTION**:Mantains network rules on pods, allow network communication to pods from networks inside and outside the cluster")
+    Container(containerRun2,"CONTAINER RUNTIME","**DESCRIPTION**:The runtime used for handling containers (usually Docker)")
+    Container(pods,"PODS","**DESCRIPTION**:The pods managed by the node")
+}
+Container_Boundary(masterNode,"MASTER NODE"){
+    Container(kubeApisrv,"KUBE API SERVER","**DESCRIPTION**:It expose the kubernetes APIs and let the user and other components to communicate with control plane")
+    Container(etcd,"ETCD","**DESCRIPTION**:Key value storage used for cluster data")
+    Container(scheduler,"KUBE SCHEDULER","**DESCRIPTION**:Responsible for distributing containers acroos multiple nodes")
+    Container(controllerMan,"KUBE CONTROLLER MANAGER","**DESCRIPTION**:manage the controllers, used for monitor the state of the cluster and ensure that the current state is the desired one")
+    note right of controllerMan
+        "Check here to see the controllers [[./kubernetesControllers.svg]]"
+    end note 
+    Container(cloudCtl,"CLOUD CONTROLLER MANAGER","**DESCRIPTION**:manage all the operations that needs direct integration with the cloud provider")
+    Container(containerRun,"CONTAINER RUNTIME","**DESCRIPTION**:The runtime used for handling containers (usually Docker)")
+}
+Rel(user,kubeApisrv,"")
+BiRel(kubeApisrv,controllerMan,"")
+BiRel(kubeApisrv,cloudCtl,"")
+Rel(kubeApisrv,etcd,"")
+BiRel(scheduler,kubeApisrv,"")
+Rel(kubeApisrv,kubelet,"")
+Rel(kubeApisrv,kubeProxy,"")
+Rel(kubelet,pods,"")
+Rel(kubeProxy,pods,"")
+@enduml 

@@ -1,0 +1,6 @@
+version: "3"
+services: 
+  kroki:
+    image: yuzutech/kroki
+    ports:
+      - "8002:8000"
