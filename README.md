@@ -6,4 +6,4 @@ Nel corso del tutorial verranno affrontati vari temi tra quali:
 
 - differenze tra k8s On-Premise e EKS 
 - creazione di un cluster EKS 
-- configurazione di un cluster EKS ed integrazione di altri servizi AWS per il flusso di lavoro con EKS  
+- configurazione di un cluster EKS ed integrazione di altri servizi AWS per il flusso di lavoro con EKS.
