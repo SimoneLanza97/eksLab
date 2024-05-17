@@ -33,3 +33,54 @@ We need to install the EBS CSI Driver for Kubernetes inside the cluster. First, 
     }
 
 This policy allows the role associated to attach volumes to instances, create and delete snapshots, tags, volumes, and perform other related actions.
+
+## ATTACH POLICY TO THE IAM ROLE USED
+
+After that, search for the IAM role used by the cluser, you can find it with the command :
+
+    kubectl -n kube-system describe configmap aws-auth
+
+the command will return the information about the aws-auth configmap , used to handle authorization via IAM role.
+The output will be like this:
+
+    Name:         aws-auth
+    Namespace:    kube-system
+    Labels:       <none>
+    Annotations:  <none>
+
+    Data
+    ====
+    mapRoles:
+    ----
+    - groups:
+      - system:bootstrappers
+      - system:nodes
+      rolearn: arn:aws:iam::637364600367:role/eksctl-BerryCluster01-nodegroup-Be-NodeInstanceRole-YCPVjOQ44efW      -> this is the role you're searching
+      username: system:node:{{EC2PrivateDNSName}}
+
+
+    BinaryData
+    ====
+
+    Events:  <none>
+
+- Open AWS Console ans search IAM/Roles
+- Select the role used by the cluster
+- Click on attach policy , search the policy for the EBS CSI created before and select it
+
+## DEPLOY THE CSI DRIVER FOR EBS VOLUMES
+
+Now you can install the CSI driver for EBS by running the command :
+
+    kubectl apply -k "github.com/kubernetes-sigs/aws-ebs-csi-driver/deploy/kubernetes/overlays/stable/?ref=master"
+
+after that you can check if the installation worked by searching the CSI pods deployed, you can do it by running:
+
+    kubectl get pods -n kube-system
+
+you will see those pods in the output:
+
+    ebs-csi-controller-7d69ff4987-dgqv6   6/6     Running   0          9m52s
+    ebs-csi-controller-7d69ff4987-wtnx2   6/6     Running   0          9m52s
+    ebs-csi-node-k25jh                    3/3     Running   0          9m52s
+    ebs-csi-node-t46hb                    3/3     Running   0          9m52s
