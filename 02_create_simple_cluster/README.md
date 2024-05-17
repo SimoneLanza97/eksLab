@@ -1,5 +1,11 @@
 # CREATE A SIMPLE CLUSTER USING EKSCTL
 
+We are going to create an EKS cluster using eksctl, and we need to have an SSH key pair registered on AWS because we will use this key to access the nodes. To create an SSH key pair, you can use the AWS Console (EC2 &gt; Key Pairs) or run the following command:
+
+     aws ec2 create-key-pair --key-name BerryKey --query 'KeyMaterial' --output text > BerryKey.pem
+
+Remember that the key is completely free on AWS, so you don’t need to delete it after the tutorial. You only need to create it once.
+
 You can try to use eksctl creating a cluster without nodegroups by running the command below
 
     eksctl create cluster --name=BerryCluster01 --region=eu-west-1 --zones=eu-west-1a,eu-west-1b --without-nodegroup 
@@ -32,3 +38,6 @@ you can now check your nodes using k9s,or running the command :
 
      kubectl get nodes 
 
+When you need to delete the cluster you can do it by running the command: 
+     
+     eksctl delete cluster --name BerryCluster01

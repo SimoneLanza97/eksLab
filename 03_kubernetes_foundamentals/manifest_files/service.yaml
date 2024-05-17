@@ -4,9 +4,9 @@ metadata:
   name: my-application
 spec:
   selector:
-    app: worpress
+    app: wordpress
   ports:
-  - protocol: TCP
+  - name: http
     port: 80
     targetPort: 80
     nodePort: 30000
@@ -16,7 +16,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: mariadb01_1
+  name: mariadb01-1
 spec:
   selector:
     app: mariadb
@@ -24,3 +24,4 @@ spec:
   - port: 3306
     targetPort: 3306
     protocol: TCP
+

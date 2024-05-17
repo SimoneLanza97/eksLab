@@ -9,6 +9,11 @@ spec:
   selector:
     matchLabels:
       app: wordpress
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 50%
+      maxSurge: 50%
   template:
     metadata:
       labels:
@@ -16,7 +21,7 @@ spec:
     spec:
       containers:
       - name: my-wordpress
-        image: wordpress:php8.3-fpm-alpine
+        image: wordpress:6.2.1-apache
         ports:
         - containerPort: 80
         resources:
@@ -26,28 +31,27 @@ spec:
           limits:
             cpu: "500m"
             memory: "516Mi"
-        environment:
-          WORDPRESS_DB_HOST: mariadb01
-          WORDPRESS_DB_USER: wpadmindb
-          WORDPRESS_DB_PASSWORD: example
-          WORDPRESS_DB_NAME: app01db
+        env:
+        - name: WORDPRESS_DB_HOST
+          value: mariadb01-1
+        - name: WORDPRESS_DB_USER
+          value: wpadmindb
+        - name: WORDPRESS_DB_PASSWORD
+          value: example
+        # - name: WORDPRESS_DB_NAME
+        # value: app01db
         volumeMounts:
         - name: wordpress
           mountPath: /var/www/html
-        volumes:
-        - name: wordpress
-          emptyDir: {}
-      strategy:
-        type: RollingUpdate
-        rollingUpdate:
-          maxUnavailable: 50%
-          maxSurge: 50%
+      volumes:
+      - name: wordpress
+        emptyDir: {}
 
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mariadb01_1
+  name: mariadb01-1
 spec:
   selector:
     matchLabels:
@@ -66,13 +70,18 @@ spec:
             cpu: "500m"
         ports:
         - containerPort: 3306
-        environment:
-          MARIADB_USER: wpadmindb
-          MARIADB_PASSWORD: example
-          MARIADB_DATABASE: app01db
+        env:
+        - name: MARIADB_USER
+          value: wpadmindb
+        - name: MARIADB_PASSWORD
+          value: example
+        - name: MARIADB_DATABASE
+          value: app01db
+        - name: MARIADB_ROOT_PASSWORD
+          value: example
         volumeMounts:
-        - name: mariadbVol
+        - name: mariadb-vol
           mountPath: /var/lib/mysql
-        volumes:
-        - name: mariadbVol
-          emptyDir: {}
+      volumes:
+      - name: mariadb-vol
+        emptyDir: {}
