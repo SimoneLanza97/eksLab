@@ -1,0 +1,6 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: berrycluster-mariadb-storageclass
+provisioner: ebs.csi.aws.com
+volumeBindingMode: WaitForFirstConsumer # THIS ALLOW TO WAIT UNTIL A POD RECLAIM THAT STORAGE TO BIND IT 

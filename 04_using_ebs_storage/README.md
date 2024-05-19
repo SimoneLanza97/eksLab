@@ -84,3 +84,41 @@ you will see those pods in the output:
     ebs-csi-controller-7d69ff4987-wtnx2   6/6     Running   0          9m52s
     ebs-csi-node-k25jh                    3/3     Running   0          9m52s
     ebs-csi-node-t46hb                    3/3     Running   0          9m52s
+
+In the manifest_files directory there are the manifest files used to create the storage_class , the volumeClaim , the deployment and the service for our wordpress application and mariaDB with ebs storage attacched.
+
+## STORAGE CLASS
+
+Let's review the manifest files. The storage_class.yaml file represents a Kubernetes object called StorageClass. The StorageClass allows us to define the parameters necessary for the creation of dynamic storage volumes. Within the file, the following aspects are defined:
+
+- Characteristics and type of storage (in our case, we have chosen AWS EBS volumes)
+- Dynamic provisioning (when a service requests the specified storageClass type, it will be created automatically)
+- Provisioning management
+
+**EXAMPLE**:
+
+    apiVersion: storage.k8s.io/v1
+    kind: StorageClass
+    metadata:
+      name: berrycluster-mariadb-storageclass  # Specifies the name of the StorageClass
+    provisioner: ebs.csi.aws.com  # Specifies the provisioner used to create storage volumes
+    volumeBindingMode: WaitForFirstConsumer  # Specifies the volume binding mode, waiting for the first consumer (Pod) to use the storage before binding
+
+## VOLUME CLAIM
+
+
+The volumeClaim file allows us to define the corresponding resource, which enables dynamic requests for persistent volumes by selecting a defined StorageClass and specifying storage request details. The PersistentVolumeClaim will then be referenced and used within the deployment of the service, where it will be mounted as a volume within the pod definition.
+
+EXAMPLE:
+
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: ebs-berrycluster-mariadb-pvclaim  # Defines the name of the PersistentVolumeClaim
+    spec:
+      resources:
+        requests:
+          storage: 4Gi  # Specifies the amount of storage requested for the PersistentVolumeClaim
+      accessModes:
+      - ReadWriteOnce  # Defines the access mode for the PersistentVolumeClaim, allowing read and write access by a single node
+      storageClassName: berrycluster-mariadb-storageclass  # Specifies the StorageClass to be used for dynamically provisioning the volume
