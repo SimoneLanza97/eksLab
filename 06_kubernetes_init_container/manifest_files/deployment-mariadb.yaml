@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mariadb01-1
+spec:
+  selector:
+    matchLabels:
+      app: mariadb
+  template:
+    metadata:
+      labels:
+        app: mariadb
+    spec:
+      containers:
+      - name: mariadb01
+        image: mariadb:11.4.1-rc-jammy
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MARIADB_USER
+          value: wpadmindb
+        - name: MARIADB_PASSWORD
+          value: example
+        - name: MARIADB_DATABASE
+          value: app01db
+        - name: MARIADB_ROOT_PASSWORD
+          value: example
+        volumeMounts:
+        - name: mariadb-vol
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mariadb-vol
+        emptyDir: {}

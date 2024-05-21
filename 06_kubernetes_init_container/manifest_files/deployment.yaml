@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-application
+  labels:
+    app: wordpress
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: wordpress
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 50%
+      maxSurge: 50%
+  template:
+    metadata:
+      labels:
+        app: wordpress
+    spec:
+      initContainers:
+      - name: init-db
+        image: busybox:1.31
+        command: ['sh', '-c', 'echo -e "Checking for the availability of MySQL Server deployment"; while ! nc -z mariadb01-1 3306; do sleep 1; printf "-"; done; echo -e "  >> mariaDB Server has started";']
+      containers:
+      - name: my-wordpress
+        image: wordpress:6.2.1-apache
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "506Mi"
+          limits:
+            cpu: "500m"
+            memory: "516Mi"
+        env:
+        - name: WORDPRESS_DB_HOST
+          value: mariadb01-1
+        - name: WORDPRESS_DB_USER
+          value: wpadmindb
+        - name: WORDPRESS_DB_PASSWORD
+          value: example
+        # - name: WORDPRESS_DB_NAME
+        # value: app01db
+        volumeMounts:
+        - name: wordpress
+          mountPath: /var/www/html
+      volumes:
+      - name: wordpress
+        emptyDir: {}
+
