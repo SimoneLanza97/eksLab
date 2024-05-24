@@ -16,3 +16,6 @@ Ogni cartella contiene un tutorial per uno step del corso :
 - 04_using_ebs_storage            -> Tutorial to create wordpress and mariaDB deployment using EBS storage for persistent volumes.
 - 05_kubernetes_secrets           -> Tutorial to explain how to use k8s secrets for production deployment
 - 06_kubernetes_init_container    -> Tutorial to explain how to use k8s init_containers
+- 07_kubernetes_probes            -> Tutorial to explain how to use startup probes, liveness probes and readiness probes on kubernetes
+- 08_kubernetes_namespaces        -> Tutorial to explain how k8s's namespaces works and how to create it
+

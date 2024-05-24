@@ -18,4 +18,4 @@ The namespace.yaml file look like this:
 This is a super simple namespace files, as I said before, you can specify other things , like resources request and limits for the namespace, but we 're only interested to learn how to create a namespace to isolate our resources.
 Now apply the namespace.yaml file first , and others files after.
 
-If you try to forward port 8080 of the Adminer pod in the namespace mysql-ns to your local port 8082, and forward port 8080 of the other Adminer pod (namespace: adminer-ns), and then try to connect from both of them to the MySQL container, you will see that only the Adminer pod in the same namespace as the MySQL pod can reach the database.
+If you attempt to forward port 8080 of the Adminer pod in the mysql-ns namespace to your local port 8082, and port 8080 of the other Adminer pod (namespace: adminer-ns), and then try to connect from both of them to the MySQL container, you will notice that only the Adminer pod in the same namespace as the MySQL pod can successfully reach the database.
