@@ -24,6 +24,28 @@ spec:
         image: wordpress:6.2.1-apache
         ports:
         - containerPort: 80
+        startupProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - ps -aux | grep wordpress
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          failureThreshold: 3
+        # livenessProbe:
+        # httpGet:
+        # path: wp-admin/install.php"
+        # port: 80
+        # initialDelaySeconds: 5
+        # periodSeconds: 10
+        # failureThreshold: 3
+        readinessProbe:
+          tcpSocket:
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          failureThreshold: 3
         resources:
           requests:
             cpu: "100m"
@@ -82,4 +104,9 @@ spec:
           value: app01db
         - name: MYSQL_ROOT_PASSWORD
           value: examplel
-
+          # volumeMounts:
+          # - name: mariadb-vol-1
+          # mountPath: /var/lib/mysql
+      # volumes:
+      # - name: mariadb-vol-1
+# emptyDir: {}
